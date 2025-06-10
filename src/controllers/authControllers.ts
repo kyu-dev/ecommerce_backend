@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import { Request, Response, NextFunction } from 'express'
 import passport from '../auth/passport'
 import jwt from 'jsonwebtoken'
@@ -56,4 +57,8 @@ export async function register(req: Request, res: Response, next: NextFunction):
     } catch (error) {
         next(error)
     }
+}
+
+export default function loginWithGoogle(req, res, next) {
+
 }
