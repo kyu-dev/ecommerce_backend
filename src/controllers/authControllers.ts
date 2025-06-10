@@ -4,12 +4,13 @@ import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
 import prisma from '../db/prismaClient'
+import { User } from '@prisma/client'
 
 dotenv.config()
-const JWT_SECRET = process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET as string
 
 export function login(req: Request, res: Response, next: NextFunction) {
-    passport.authenticate('local', { session: false }, (err, user, info) => {
+    passport.authenticate('local', { session: false }, (err: Error | null, user: User | false, info: { message: string } | undefined) => {
         if (err) return next(err)
         if (!user) return res.status(401).json({ message: info?.message || 'Auth failed' })
 
@@ -24,8 +25,7 @@ export function login(req: Request, res: Response, next: NextFunction) {
     })(req, res, next)
 }
 
-
-export async function register(req: Request, res: Response, next: NextFunction) {
+export async function register(req: Request, res: Response, next: NextFunction): Promise<any> {
     try {
         const { name, email, password } = req.body
 
@@ -57,5 +57,3 @@ export async function register(req: Request, res: Response, next: NextFunction) 
         next(error)
     }
 }
-
-
