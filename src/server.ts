@@ -2,6 +2,7 @@ import express from "express";
 import auth from "./routes/authRoute";
 import passport from './auth/passport';
 
+
 const app = express();
 const PORT = 3000;
 app.use(express.json())
@@ -13,7 +14,7 @@ app.get(
   '/private',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    res.send(`Bonjour ${req.user.email}, c'est secret ici !`)
+    res.send(`Bonjour c'est secret ici !`)
   }
 )
 
