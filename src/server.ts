@@ -9,6 +9,14 @@ app.use(passport.initialize())
 
 app.use("/auth", auth);
 
+app.get(
+  '/private',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    res.send(`Bonjour ${req.user.email}, c'est secret ici !`)
+  }
+)
+
 app.listen(PORT, () => {
   console.log(`✅ Serveur lancé sur http://localhost:${PORT}`);
 });
