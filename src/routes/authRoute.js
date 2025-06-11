@@ -1,6 +1,7 @@
 import express from 'express'
 import { login, register } from '../controllers/authControllers.js'
 const router = express.Router()
+import passport from 'passport';
 
 
 router.get(
@@ -23,6 +24,8 @@ router.get(
   router.get("/failure", (req, res) => {
     res.status(401).json({ message: "Google Authentication Failed" });
   });
+  
+
   
 router.post('/login', login)
 router.post('/register', register)

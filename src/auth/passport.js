@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import prisma from '../db/prismaClient.js'
 import dotenv from 'dotenv'
 import GoogleStrategy from 'passport-google-oauth20'
+import jwt from 'jsonwebtoken';
 
 dotenv.config()
 
@@ -63,15 +64,15 @@ passport.use(
     async (_accessToken, _refreshToken, profile, done) => {
       try {
         let user = await prisma.user.findUnique({
-          where: { googleId: profile.id },
+          where: { google_id: profile.id },
         });
 
         if (!user) {
           user = await prisma.user.create({
             data: {
               email: profile.emails && profile.emails[0] ? profile.emails[0].value : null,
-              username: profile.displayName,
-              googleId: profile.id,
+              name: profile.displayName,
+              google_id: profile.id,
             },
           });
         }
@@ -87,5 +88,8 @@ passport.use(
     }
   )
 );
+
+
+
 
 export default passport
