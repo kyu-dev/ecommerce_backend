@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken';
 
 dotenv.config()
 
-const JWT_SECRET = process.env.JWT_SECRET || 'ton_secret_par_defaut'
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Stratégie locale pour la connexion (email + mdp)
 passport.use(

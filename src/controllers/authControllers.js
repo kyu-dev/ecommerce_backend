@@ -9,6 +9,7 @@ dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET
 
+// Fonction pour se connecter
 export function login(req, res, next) {
     passport.authenticate('local', { session: false }, (err, user, info) => {
         if (err) return next(err)
@@ -25,7 +26,8 @@ export function login(req, res, next) {
     })(req, res, next)
 }
 
-export async function register(req, res, next) {
+// fonction pour créer un compte
+export async function register(req, res, next) { 
     try {
         const { name, email, password } = req.body
 
@@ -33,7 +35,7 @@ export async function register(req, res, next) {
             return res.status(400).json({ message: 'Tous les champs sont requis' })
         }
 
-        const existingUser = await prisma.user.findUnique({ where: { email } })
+        const existingUser = await prisma.user.findUnique({ where: { email: email } }) 
         if (existingUser) {
             return res.status(409).json({ message: 'Cet email est déjà utilisé' })
         }
@@ -54,6 +56,12 @@ export async function register(req, res, next) {
     }
 }
 
-export default function loginWithGoogle(req, res, next) {
-    // à implémenter plus tard
-}
+//functions pou la connexion O2auth google
+export function googleCallback  (req, res)  {
+    const { token } = req.user;
+    res.json({ token });
+  };
+
+ export function googleFailure  (req, res)  {
+    res.status(401).json({ message: "Google Authentication Failed" });
+ };
