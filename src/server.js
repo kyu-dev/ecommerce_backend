@@ -1,7 +1,7 @@
 import express from "express";
-import auth from "./routes/authRoute";
-import passport from './auth/passport';
-import { errorHandler } from "./middleware/errorHandler";
+import auth from "./routes/authRoute.js";
+import passport from './auth/passport.js';
+import { errorHandler } from "./middleware/errorHandler.js";
 
 
 const app = express();

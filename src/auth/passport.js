@@ -2,7 +2,7 @@ import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import bcrypt from 'bcrypt'
-import prisma from '../db/prismaClient'
+import prisma from '../db/prismaClient.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -13,7 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'ton_secret_par_defaut'
 passport.use(
     new LocalStrategy(
         {
-            usernameField: 'email',
+            usernameField: 'email',  //on remplace la config de base username par email
         },
         async (email, password, done) => {
             try {
@@ -21,7 +21,7 @@ passport.use(
 
                 if (!user) return done(null, false, { message: 'Utilisateur non trouvé' })
 
-                const passwordMatch = await bcrypt.compare(password, user.password)
+                const passwordMatch = await bcrypt.compare(password, user.password) 
                 if (!passwordMatch) return done(null, false, { message: 'Mot de passe incorrect' })
 
                 return done(null, user)

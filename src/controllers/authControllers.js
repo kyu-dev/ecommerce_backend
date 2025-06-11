@@ -1,17 +1,16 @@
 // @ts-nocheck 
-import { Request, Response, NextFunction } from 'express'
-import passport from '../auth/passport'
+import passport from '../auth/passport.js'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
-import prisma from '../db/prismaClient'
-import { User } from '@prisma/client'
+import prisma from '../db/prismaClient.js'
 
 dotenv.config()
-const JWT_SECRET = process.env.JWT_SECRET as string
 
-export function login(req: Request, res: Response, next: NextFunction) {
-    passport.authenticate('local', { session: false }, (err: Error | null, user: User | false, info: { message: string } | undefined) => {
+const JWT_SECRET = process.env.JWT_SECRET
+
+export function login(req, res, next) {
+    passport.authenticate('local', { session: false }, (err, user, info) => {
         if (err) return next(err)
         if (!user) return res.status(401).json({ message: info?.message || 'Auth failed' })
 
@@ -26,25 +25,21 @@ export function login(req: Request, res: Response, next: NextFunction) {
     })(req, res, next)
 }
 
-export async function register(req: Request, res: Response, next: NextFunction): Promise<any> {
+export async function register(req, res, next) {
     try {
         const { name, email, password } = req.body
 
-        // Vérifie que tous les champs sont présents
         if (!name || !email || !password) {
             return res.status(400).json({ message: 'Tous les champs sont requis' })
         }
 
-        // Vérifie si l'utilisateur existe déjà
         const existingUser = await prisma.user.findUnique({ where: { email } })
         if (existingUser) {
             return res.status(409).json({ message: 'Cet email est déjà utilisé' })
         }
 
-        // Hash le mot de passe
-        const hashedPassword = await bcrypt.hash(password, 10) // le serano est très salé johan
+        const hashedPassword = await bcrypt.hash(password, 10)
 
-        // Crée l'utilisateur
         const newUser = await prisma.user.create({
             data: {
                 name,
@@ -60,5 +55,5 @@ export async function register(req: Request, res: Response, next: NextFunction):
 }
 
 export default function loginWithGoogle(req, res, next) {
-
+    // à implémenter plus tard
 }
