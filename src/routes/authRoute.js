@@ -1,14 +1,17 @@
-import express from 'express'
-import { login, register,googleCallback, googleFailure  } from '../controllers/authControllers.js'
-const router = express.Router()
-import passport from 'passport';
-
+import express from "express";
+import {
+  login,
+  register,
+  googleCallback,
+  googleFailure,
+} from "../controllers/authControllers.js";
+const router = express.Router();
+import passport from "passport";
 
 // route de connexion et création de compte local strategie
-router.post('/login', login)
-router.post('/register', register)
+router.post("/login", login);
+router.post("/register", register);
 //
-
 
 // route O2auth Google
 router.get(
@@ -27,16 +30,4 @@ router.get(
 router.get("/failure", googleFailure);
 //
 
-
-export default router
-
-
-
-
-
-
-
-
-
-
-
+export default router;
