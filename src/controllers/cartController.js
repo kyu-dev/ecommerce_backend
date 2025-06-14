@@ -10,9 +10,14 @@ export async function getCart(req, res, next) {
     });
     if (!data) {
       res.status(200).json({ message: "panié vide" });
+    } else {
+      res.status(200).json({ message: "Récupération du panié", data });
     }
-    res.status(200).json({ message: "Récupération du panié", data });
   } catch (err) {
     next(err);
   }
+}
+
+export async function addItems(req, res, next) {
+  const userId = req.params.userId;
 }

@@ -80,6 +80,9 @@ passport.use(
                   : null,
               name: profile.displayName,
               google_id: profile.id,
+              cart: {
+                create: {}, // crée un panier vide lié à cet user
+              },
             },
           });
         }

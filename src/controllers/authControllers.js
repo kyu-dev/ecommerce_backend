@@ -50,6 +50,9 @@ export async function register(req, res, next) {
         name,
         email,
         password: hashedPassword,
+        cart: {
+          create: {}, // crée un panier vide lié à cet user
+        },
       },
     });
 
