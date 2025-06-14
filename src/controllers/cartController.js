@@ -8,6 +8,9 @@ export async function getCart(req, res, next) {
         userId: parseInt(userId),
       },
     });
+    if (!data) {
+      res.status(200).json({ message: "panié vide" });
+    }
     res.status(200).json({ message: "Récupération du panié", data });
   } catch (err) {
     next(err);
