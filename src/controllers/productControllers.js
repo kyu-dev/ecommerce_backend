@@ -26,7 +26,7 @@ export async function createProduct(req, res, next) {
 //Controller pour récupérer les produits
 export async function getProducts(req, res, next) {
   try {
-    const { name, minPrice, maxPrice } = req.query;
+    const { name, minPrice, maxPrice, stock, id } = req.query;
     const where = {}; //condition initialisé vide
 
     if (name) {
@@ -44,6 +44,17 @@ export async function getProducts(req, res, next) {
       if (maxPrice) {
         where.price.lte = parseFloat(maxPrice); // plus petit ou égal à
       }
+    }
+
+    if (stock === "true") {
+      where.stock = { gt: 0 }; //en stock
+    }
+    if (stock === "false") {
+      where.stock = { lte: 0 }; // en rupture
+    }
+
+    if (id) {
+      where.id = parseInt(id); //reçois un entier
     }
 
     const data = await prisma.product.findMany({ where });
