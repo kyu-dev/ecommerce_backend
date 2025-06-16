@@ -119,3 +119,44 @@ export async function deleteItem(req, res, next) {
     next(err);
   }
 }
+
+///////////////////////////////////////////////////////
+// Controller pour  modifié un produit dans le panier//
+///////////////////////////////////////////////////////
+
+export async function modifyProduct(req, res, next) {
+  const userId = parseInt(req.params.userId);
+  const { productId, quantity } = req.body;
+
+  try {
+    const cart = await prisma.cart.findUnique({
+      where: { userId: userId },
+    });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Panier introuvable." });
+    }
+
+    const itemToModify = await prisma.cartItem.findFirst({
+      where: {
+        cartId: cart.id,
+        productId: parseInt(productId),
+      },
+    });
+
+    if (!itemToModify) {
+      return res
+        .status(404)
+        .json({ message: "Produit non trouvé dans le panier." });
+    }
+
+    const modifyItem = await prisma.cartItem.update({
+      where: { id: itemToModify.id },
+      data: { quantity: parseInt(quantity) },
+    });
+
+    res.status(200).json({ message: "Quantité produit modifiée", modifyItem });
+  } catch (err) {
+    next(err);
+  }
+}
