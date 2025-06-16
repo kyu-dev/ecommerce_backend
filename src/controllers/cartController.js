@@ -163,12 +163,10 @@ export async function modifyProduct(req, res, next) {
         },
       });
 
-      res
-        .status(200)
-        .json({
-          message: "produit supprimé car quantité < 0",
-          deleteUnderZero,
-        });
+      res.status(200).json({
+        message: "produit supprimé car quantité < 0",
+        deleteUnderZero,
+      });
     }
 
     res.status(200).json({ message: "Quantité produit modifiée", modifyItem });
