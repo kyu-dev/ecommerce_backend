@@ -155,6 +155,22 @@ export async function modifyProduct(req, res, next) {
       data: { quantity: parseInt(quantity) },
     });
 
+    if (quantity === 0) {
+      const deleteUnderZero = await prisma.cartItem.deleteMany({
+        where: {
+          cartId: cart.id,
+          productId,
+        },
+      });
+
+      res
+        .status(200)
+        .json({
+          message: "produit supprimé car quantité < 0",
+          deleteUnderZero,
+        });
+    }
+
     res.status(200).json({ message: "Quantité produit modifiée", modifyItem });
   } catch (err) {
     next(err);
