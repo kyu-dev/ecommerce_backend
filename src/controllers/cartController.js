@@ -85,3 +85,39 @@ export async function addItems(req, res, next) {
     next(err);
   }
 }
+
+////////////////////////////////////////////////
+// Controller pour supprimer un item du panier //
+///////////////////////////////////////////////
+
+export async function deleteItem(req, res, next) {
+  const userId = parseInt(req.params.userId);
+  const { productId } = req.body;
+
+  try {
+    const cart = await prisma.cart.findUnique({
+      where: { userId },
+    });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Panier introuvable." });
+    }
+
+    const deletedItem = await prisma.cartItem.deleteMany({
+      where: {
+        cartId: cart.id,
+        productId: parseInt(productId),
+      },
+    });
+
+    if (deletedItem.count === 0) {
+      return res
+        .status(404)
+        .json({ message: "Item non trouvé dans le panier." });
+    }
+
+    res.status(200).json({ message: "Item supprimé du panier." });
+  } catch (err) {
+    next(err);
+  }
+}
