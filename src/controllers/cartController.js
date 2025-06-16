@@ -87,17 +87,15 @@ export async function addItems(req, res, next) {
 }
 
 ////////////////////////////////////////////////
-// Controller pour supprimer un item du panier //
+// Controller pour supprimer un item du panier//
 ///////////////////////////////////////////////
 
 export async function deleteItem(req, res, next) {
   const userId = parseInt(req.params.userId);
-  const { productId } = req.body;
+  const productId = parseInt(req.params.productId);
 
   try {
-    const cart = await prisma.cart.findUnique({
-      where: { userId },
-    });
+    const cart = await prisma.cart.findUnique({ where: { userId } });
 
     if (!cart) {
       return res.status(404).json({ message: "Panier introuvable." });
@@ -106,7 +104,7 @@ export async function deleteItem(req, res, next) {
     const deletedItem = await prisma.cartItem.deleteMany({
       where: {
         cartId: cart.id,
-        productId: parseInt(productId),
+        productId,
       },
     });
 
