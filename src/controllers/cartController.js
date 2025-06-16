@@ -120,9 +120,9 @@ export async function deleteItem(req, res, next) {
   }
 }
 
-///////////////////////////////////////////////////////
-// Controller pour  modifié un produit dans le panier//
-///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+// Controller pour  modifié un produit dans le panier //
+////////////////////////////////////////////////////////
 
 export async function modifyProduct(req, res, next) {
   const userId = parseInt(req.params.userId);
@@ -170,6 +170,29 @@ export async function modifyProduct(req, res, next) {
     }
 
     res.status(200).json({ message: "Quantité produit modifiée", modifyItem });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/////////////////////////////////////
+// Controller pour clear le panier //
+/////////////////////////////////////
+
+export async function clearCart(req, res, next) {
+  const userId = parseInt(req.params.userId);
+  try {
+    const cart = await prisma.cart.findUnique({
+      where: { userId: userId },
+    });
+
+    const clear = await prisma.cartItem.deleteMany({
+      where: {
+        cartId: cart.id,
+      },
+    });
+
+    res.status(200).json({ message: "panier vidé", clear });
   } catch (err) {
     next(err);
   }
