@@ -45,12 +45,6 @@ export async function addItems(req, res, next) {
       where: { userId },
     });
 
-    if (!cart) {
-      return res
-        .status(404)
-        .json({ message: "Panier introuvable pour cet utilisateur." });
-    }
-
     const itemAlreadyInTheCart = await prisma.cartItem.findFirst({
       // regarde si l'item est dejà dans le panier
       where: {
@@ -97,10 +91,6 @@ export async function deleteItem(req, res, next) {
   try {
     const cart = await prisma.cart.findUnique({ where: { userId } });
 
-    if (!cart) {
-      return res.status(404).json({ message: "Panier introuvable." });
-    }
-
     const deletedItem = await prisma.cartItem.deleteMany({
       where: {
         cartId: cart.id,
@@ -132,10 +122,6 @@ export async function modifyProduct(req, res, next) {
     const cart = await prisma.cart.findUnique({
       where: { userId: userId },
     });
-
-    if (!cart) {
-      return res.status(404).json({ message: "Panier introuvable." });
-    }
 
     const itemToModify = await prisma.cartItem.findFirst({
       where: {
