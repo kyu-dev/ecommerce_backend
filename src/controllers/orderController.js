@@ -35,6 +35,17 @@ export async function createOrder(req, res, next) {
       where: { cartId: cart.id },
     });
 
+    //réduire le stock du produit à la commande
+    for (const item of cart.items) {
+      await prisma.product.update({
+        where: { id: item.productId },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
+      });
+    }
     //CALCULE du total de la comande
     const total = cart.items.reduce(
       (acc, item) => acc + item.quantity * item.product.price,
