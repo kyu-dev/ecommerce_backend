@@ -3,6 +3,7 @@ import auth from "./routes/authRoute.js";
 import product from "./routes/productRoutes.js";
 import passport from "./auth/passport.js";
 import cart from "./routes/cartRoutes.js";
+import order from "./routes/orderRoutes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/authentication", auth);
 app.use("/product", product);
 app.use("/cart", cart);
+app.use("/order", order);
 
 app.get(
   "/private",
