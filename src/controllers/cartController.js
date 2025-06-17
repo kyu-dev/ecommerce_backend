@@ -61,6 +61,16 @@ export async function addItems(req, res, next) {
         where: { id: itemAlreadyInTheCart.id },
         data: { quantity: { increment: quantity } },
       });
+
+      const totalQuantity = itemAlreadyInTheCart
+        ? itemAlreadyInTheCart.quantity + quantity
+        : quantity;
+
+      if (totalQuantity > product.stock) {
+        return res.status(400).json({
+          message: `Stock insuffisant. Stock disponible : ${product.stock}, demandé : ${totalQuantity}`,
+        });
+      }
     } else {
       updatedItem = await prisma.cartItem.create({
         // ajoute l'item si il n'existe pas
