@@ -40,47 +40,56 @@ export async function getCart(req, res, next) {
 export async function addItems(req, res, next) {
   const userId = parseInt(req.params.userId);
   const { productId, quantity } = req.body;
+
   try {
     const cart = await prisma.cart.findUnique({
       where: { userId },
     });
 
+    const product = await prisma.product.findUnique({
+      where: { id: parseInt(productId) },
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable." });
+    }
+
+    //variable poour regarder si le produit est déjà dans le panier
     const itemAlreadyInTheCart = await prisma.cartItem.findFirst({
-      // regarde si l'item est dejà dans le panier
       where: {
         cartId: cart.id,
         productId: parseInt(productId),
       },
     });
 
-    let updatedItem;
+    //variable pour stocké le total de quantité en ajoutant la quantité souhaité avec la, quantité du panier
+    const totalQuantity = itemAlreadyInTheCart
+      ? itemAlreadyInTheCart.quantity + quantity
+      : quantity;
 
+    if (totalQuantity > product.stock) {
+      return res.status(400).json({
+        message: `Stock insuffisant. Stock disponible : ${product.stock}, demandé : ${totalQuantity}`,
+      });
+    }
+
+    let updatedItem;
+    // si l'item est déjà dans le panier on increment sa quantiter
     if (itemAlreadyInTheCart) {
       updatedItem = await prisma.cartItem.update({
-        // update la quantité si l'item est déjà dans le panier
         where: { id: itemAlreadyInTheCart.id },
         data: { quantity: { increment: quantity } },
       });
-
-      const totalQuantity = itemAlreadyInTheCart
-        ? itemAlreadyInTheCart.quantity + quantity
-        : quantity;
-
-      if (totalQuantity > product.stock) {
-        return res.status(400).json({
-          message: `Stock insuffisant. Stock disponible : ${product.stock}, demandé : ${totalQuantity}`,
-        });
-      }
     } else {
       updatedItem = await prisma.cartItem.create({
-        // ajoute l'item si il n'existe pas
         data: {
           cartId: cart.id,
-          productId: productId,
-          quantity: quantity,
+          productId: parseInt(productId),
+          quantity,
         },
       });
     }
+
     res.status(200).json({
       message: "Panier mis à jour",
       data: updatedItem,
