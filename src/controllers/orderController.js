@@ -15,7 +15,14 @@ export async function createOrder(req, res, next) {
         },
       },
     });
-
+    for (const item of cart.items) {
+      const actualStock = item.product.stock;
+      if (item.quantity > actualStock) {
+        return res.status(400).json({
+          message: `Stock insuffisant pour le produit "${item.product.name}". Stock actuel : ${actualStock}, demandé : ${item.quantity}.`,
+        });
+      }
+    }
     const order = prisma.order.create({
       data: {
         userId,
