@@ -18,6 +18,7 @@ const app = express();
 app.use(express.json());
 app.get("/cart/:userId", getCart);
 
+//test pour la route de récupération du panier de l'utilisataeur
 describe("GET /cart/:userId", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -30,5 +31,29 @@ describe("GET /cart/:userId", () => {
 
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toMatch(/Panier non trouvé/i);
+  });
+
+  it("retourne 200 si le panier existe", async () => {
+    prisma.cart.findUnique.mockResolvedValue({
+      id: 1,
+      userId: 1,
+      items: [
+        {
+          id: 1,
+          productId: 1,
+          quantity: 2,
+          product: {
+            id: 1,
+            name: "Produit Test",
+            price: 19.99,
+          },
+        },
+      ],
+    });
+
+    const res = await request(app).get("/cart/1");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toMatch("Récupération du panier");
   });
 });
