@@ -17,14 +17,6 @@ app.use("/product", product);
 app.use("/cart", cart);
 app.use("/order", order);
 
-app.get(
-  "/private",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.send(`Bonjour c'est secret ici !`);
-  }
-);
-
 app.listen(PORT, () => {
   console.log(`✅ Serveur lancé sur http://localhost:${PORT}`);
 });
