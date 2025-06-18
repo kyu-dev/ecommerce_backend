@@ -35,7 +35,7 @@ passport.use(
     {
       usernameField: "email", //on remplace la config de base username par email
     },
-    async (email, password, done) => {
+    async (email: string, password: string, done) => {
       try {
         const user = await prisma.user.findUnique({ where: { email } });
 
@@ -83,7 +83,7 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:3000/authentication/google/callback",
     },
-    async (_accessToken, _refreshToken, profile, done) => {
+    async (_accessToken: string, _refreshToken: string, profile, done) => {
       try {
         let user = await prisma.user.findUnique({
           where: { google_id: profile.id },
