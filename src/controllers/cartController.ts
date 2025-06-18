@@ -1,9 +1,10 @@
-import prisma from "../db/prismaClient.ts";
+import prisma from "../db/prismaClient";
+import type { Request, Response, NextFunction } from "express";
 
 /////////////////////////////////////////
 // Controller pour récuperer le panier //
 /////////////////////////////////////////
-export async function getCart(req, res, next) {
+export async function getCart(req: Request, res: Response, next: NextFunction) {
   const userId = parseInt(req.params.userId);
   try {
     const data = await prisma.cart.findUnique({
@@ -37,7 +38,11 @@ export async function getCart(req, res, next) {
 ////////////////////////////////////////////////
 // Controller pour ajouter un item au panier //
 ///////////////////////////////////////////////
-export async function addItems(req, res, next) {
+export async function addItems(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const userId = parseInt(req.params.userId);
   const { productId, quantity } = req.body;
 
@@ -45,6 +50,10 @@ export async function addItems(req, res, next) {
     const cart = await prisma.cart.findUnique({
       where: { userId },
     });
+
+    if (!cart) {
+      return res.status(404).json({ message: "panier introuvable." });
+    }
 
     const product = await prisma.product.findUnique({
       where: { id: parseInt(productId) },
@@ -63,7 +72,7 @@ export async function addItems(req, res, next) {
     });
 
     //variable pour stocké le total de quantité en ajoutant la quantité souhaité avec la, quantité du panier
-    const totalQuantity = itemAlreadyInTheCart
+    const totalQuantity: number = itemAlreadyInTheCart
       ? itemAlreadyInTheCart.quantity + quantity
       : quantity;
 
@@ -73,7 +82,12 @@ export async function addItems(req, res, next) {
       });
     }
 
-    let updatedItem;
+    let updatedItem: {
+      id: number;
+      cartId: number;
+      productId: number;
+      quantity: number;
+    };
     // si l'item est déjà dans le panier on increment sa quantiter
     if (itemAlreadyInTheCart) {
       updatedItem = await prisma.cartItem.update({
@@ -103,13 +117,20 @@ export async function addItems(req, res, next) {
 // Controller pour supprimer un item du panier//
 ///////////////////////////////////////////////
 
-export async function deleteItem(req, res, next) {
+export async function deleteItem(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const userId = parseInt(req.params.userId);
   const productId = parseInt(req.params.productId);
 
   try {
     const cart = await prisma.cart.findUnique({ where: { userId } });
 
+    if (!cart) {
+      return res.status(404).json({ message: "panier introuvable." });
+    }
     const deletedItem = await prisma.cartItem.deleteMany({
       where: {
         cartId: cart.id,
@@ -133,19 +154,33 @@ export async function deleteItem(req, res, next) {
 // Controller pour  modifié un produit dans le panier //
 ////////////////////////////////////////////////////////
 
-export async function modifyProduct(req, res, next) {
+export async function modifyProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const userId = parseInt(req.params.userId);
-  const { productId, quantity } = req.body;
+
+  interface Body {
+    productId: number;
+    quantity: number;
+  }
+
+  const { productId, quantity }: Body = req.body;
 
   try {
     const cart = await prisma.cart.findUnique({
-      where: { userId: userId },
+      where: { userId },
     });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Panier introuvable." });
+    }
 
     const itemToModify = await prisma.cartItem.findFirst({
       where: {
         cartId: cart.id,
-        productId: parseInt(productId),
+        productId,
       },
     });
 
@@ -155,26 +190,28 @@ export async function modifyProduct(req, res, next) {
         .json({ message: "Produit non trouvé dans le panier." });
     }
 
-    const modifyItem = await prisma.cartItem.update({
-      where: { id: itemToModify.id },
-      data: { quantity: parseInt(quantity) },
-    });
-
     if (quantity === 0) {
-      const deleteUnderZero = await prisma.cartItem.deleteMany({
+      const deletedItem = await prisma.cartItem.deleteMany({
         where: {
           cartId: cart.id,
           productId,
         },
       });
 
-      res.status(200).json({
-        message: "produit supprimé car quantité < 0",
-        deleteUnderZero,
+      return res.status(200).json({
+        message: "Produit supprimé car quantité = 0",
+        deletedItem,
       });
     }
 
-    res.status(200).json({ message: "Quantité produit modifiée", modifyItem });
+    const updatedItem = await prisma.cartItem.update({
+      where: { id: itemToModify.id },
+      data: { quantity },
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Quantité du produit modifiée", updatedItem });
   } catch (err) {
     next(err);
   }
@@ -184,13 +221,19 @@ export async function modifyProduct(req, res, next) {
 // Controller pour clear le panier //
 /////////////////////////////////////
 
-export async function clearCart(req, res, next) {
+export async function clearCart(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const userId = parseInt(req.params.userId);
   try {
     const cart = await prisma.cart.findUnique({
       where: { userId: userId },
     });
-
+    if (!cart) {
+      return res.status(404).json({ message: "panier introuvable." });
+    }
     const clear = await prisma.cartItem.deleteMany({
       where: {
         cartId: cart.id,
