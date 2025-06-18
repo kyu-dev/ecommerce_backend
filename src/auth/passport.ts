@@ -4,14 +4,32 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import bcrypt from "bcrypt";
 import prisma from "../db/prismaClient.js";
 import dotenv from "dotenv";
-import GoogleStrategy from "passport-google-oauth20";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("attention la variable d'environement n'est pas définie");
+}
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+if (!GOOGLE_CLIENT_ID) {
+  throw new Error(
+    "La variable d'environnement GOOGLE_CLIENT_ID n'est pas définie."
+  );
+}
+
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+if (!GOOGLE_CLIENT_SECRET) {
+  throw new Error(
+    "la variable d'environement GOOGLE_CLIENT_SECRET n'est pas d'éfinie"
+  );
+}
 
 // Stratégie locale pour la connexion (email + mdp)
+
 passport.use(
   new LocalStrategy(
     {
@@ -21,7 +39,7 @@ passport.use(
       try {
         const user = await prisma.user.findUnique({ where: { email } });
 
-        if (!user)
+        if (!user || !user.password)
           return done(null, false, { message: "Utilisateur non trouvé" });
 
         const passwordMatch = await bcrypt.compare(password, user.password);
@@ -61,8 +79,8 @@ passport.use(
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientID: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:3000/authentication/google/callback",
     },
     async (_accessToken, _refreshToken, profile, done) => {
@@ -71,13 +89,20 @@ passport.use(
           where: { google_id: profile.id },
         });
 
+        const email =
+          profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+        // on regarde si le tableau renvenyer par google existe et si il n'est pas vide sinon email = null
+
+        if (!email) {
+          return done(
+            new Error("L'email est requis pour la connexion Google.")
+          );
+        }
+
         if (!user) {
           user = await prisma.user.create({
             data: {
-              email:
-                profile.emails && profile.emails[0]
-                  ? profile.emails[0].value
-                  : null,
+              email: email,
               name: profile.displayName,
               google_id: profile.id,
               cart: {
