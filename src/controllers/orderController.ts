@@ -33,19 +33,28 @@ export async function createOrder(
       }
     }
 
+    interface OrderItem {
+      productId: number;
+      quantity: number;
+      product: {
+        price: number;
+      };
+    }
     // Calcul du total
     const total = cart.items.reduce(
-      (acc, item) => acc + item.quantity * item.product.price,
+      (acc: number, item: OrderItem) =>
+        acc + item.quantity * item.product.price,
       0
     );
 
     // Création de la commande
+
     const order = await prisma.order.create({
       data: {
         userId,
         total,
         orderItems: {
-          create: cart.items.map((item) => ({
+          create: cart.items.map((item: OrderItem) => ({
             productId: item.productId,
             quantity: item.quantity,
             price: item.product.price,
