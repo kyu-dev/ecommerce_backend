@@ -4,7 +4,7 @@ import {
   deleteProduct,
   getProducts,
   modifyProduct,
-} from "../controllers/productControllers.ts";
+} from "../controllers/productControllers";
 const router = express.Router();
 
 router.post("/create", createProduct);
