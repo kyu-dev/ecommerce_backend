@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 import express from "express";
-
 import { getCart } from "../src/controllers/cartController";
 import prisma from "../src/db/prismaClient";
 

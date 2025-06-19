@@ -1,13 +1,18 @@
-import prisma from "../db/prismaClient.ts";
+import prisma from "../db/prismaClient";
+import { Request, Response, NextFunction } from "express";
 
 ////////////////////////////////////
 //Controller pour créer un produit//
 //////////////////////////////////////////
 
-export async function createProduct(req, res, next) {
+export async function createProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const { name, description, price, stock } = req.body;
   try {
-    //query prisma pour créer un product
+    // Query Prisma pour créer un produit
     const product = await prisma.product.create({
       data: {
         name: name,
@@ -17,12 +22,12 @@ export async function createProduct(req, res, next) {
       },
     });
 
-    res.json({
+    res.status(201).json({
       message: "Produit créé avec succès",
       product,
     });
   } catch (err) {
-    next(err); //on passe l'erreur au midleware d'erreur
+    next(err); // On passe l'erreur au middleware d'erreur
   }
 }
 
@@ -30,10 +35,30 @@ export async function createProduct(req, res, next) {
 //Controller pour récupérer les produits//
 /////////////////////////////////////////
 
-export async function getProducts(req, res, next) {
+export async function getProducts(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
+    interface WhereClause {
+      name?: {
+        contains: string;
+        mode: "insensitive";
+      };
+      price?: {
+        gte?: number;
+        lte?: number;
+      };
+      stock?: {
+        gt?: number;
+        lte?: number;
+      };
+      id?: number;
+    }
+
     const { name, minPrice, maxPrice, stock, id } = req.query;
-    const where = {}; //condition initialisé vide
+    const where: WhereClause = {}; //condition initialisé vide
 
     if (name) {
       where.name = {
@@ -45,10 +70,10 @@ export async function getProducts(req, res, next) {
     if (maxPrice || minPrice) {
       where.price = {};
       if (minPrice) {
-        where.price.gte = parseFloat(minPrice); // plus grand ou égal à
+        where.price.gte = parseFloat(String(minPrice)); // plus grand ou égal à
       }
       if (maxPrice) {
-        where.price.lte = parseFloat(maxPrice); // plus petit ou égal à
+        where.price.lte = parseFloat(String(maxPrice)); // plus petit ou égal à
       }
     }
 
@@ -60,7 +85,7 @@ export async function getProducts(req, res, next) {
     }
 
     if (id) {
-      where.id = parseInt(id); //reçois un entier
+      where.id = parseInt(String(id)); //reçois un entier
     }
 
     const data = await prisma.product.findMany({ where });
@@ -74,7 +99,11 @@ export async function getProducts(req, res, next) {
 // Controller pour modifier un produit à partir de son id //
 ////////////////////////////////////////////////////////////
 
-export async function modifyProduct(req, res, next) {
+export async function modifyProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const productId = req.params.id;
   const { name, description, price, stock } = req.body;
   try {
@@ -98,7 +127,11 @@ export async function modifyProduct(req, res, next) {
 ///////////////////////////////////////
 // Controller pour delete un produit //
 ///////////////////////////////////////
-export async function deleteProduct(req, res, next) {
+export async function deleteProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const productId = req.params.id;
   try {
     const data = await prisma.product.delete({

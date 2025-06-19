@@ -1,6 +1,11 @@
-import prisma from "../db/prismaClient.ts";
+import prisma from "../db/prismaClient";
+import { Request, Response, NextFunction } from "express";
 
-export async function createOrder(req, res, next) {
+export async function createOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const userId = parseInt(req.params.userId);
   try {
     const cart = await prisma.cart.findUnique({
@@ -77,7 +82,11 @@ export async function createOrder(req, res, next) {
     next(err);
   }
 }
-export async function getOrders(req, res, next) {
+export async function getOrders(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const userId = parseInt(req.params.userId);
   try {
     const orders = await prisma.order.findMany({
