@@ -2,6 +2,8 @@ import express from "express";
 import { createOrder, getOrders } from "../controllers/orderController";
 const router = express.Router();
 
+router.post("/:userId", createOrder);
+router.get("/:userId", getOrders);
 /**
  * @swagger
  * /order/{userId}:
@@ -14,6 +16,24 @@ const router = express.Router();
  *         schema:
  *           type: integer
  *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     productId:
+ *                       type: integer
+ *                       example: 2
+ *                     quantity:
+ *                       type: integer
+ *                       example: 3
  *     responses:
  *       201:
  *         description: Commande créée avec succès
@@ -32,6 +52,4 @@ const router = express.Router();
  *       200:
  *         description: Commandes récupérées
  */
-router.post("/:userId", createOrder);
-router.get("/:userId", getOrders);
 export default router;
