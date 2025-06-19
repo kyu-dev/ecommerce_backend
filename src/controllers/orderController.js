@@ -68,3 +68,20 @@ export async function createOrder(req, res, next) {
     next(err);
   }
 }
+export async function getOrders(req, res, next) {
+  const userId = parseInt(req.params.userId);
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    res.status(200).json({
+      message: "commandes récupéré",
+      orders,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
