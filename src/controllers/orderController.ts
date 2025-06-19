@@ -33,10 +33,17 @@ export async function createOrder(
       }
     }
 
+    // Calcul du total
+    const total = cart.items.reduce(
+      (acc, item) => acc + item.quantity * item.product.price,
+      0
+    );
+
     // Création de la commande
     const order = await prisma.order.create({
       data: {
         userId,
+        total,
         orderItems: {
           create: cart.items.map((item) => ({
             productId: item.productId,
@@ -66,12 +73,6 @@ export async function createOrder(
     await prisma.cartItem.deleteMany({
       where: { cartId: cart.id },
     });
-
-    // Calcul du total
-    const total = cart.items.reduce(
-      (acc, item) => acc + item.quantity * item.product.price,
-      0
-    );
 
     res.status(201).json({
       message: "Commande créée avec succès.",

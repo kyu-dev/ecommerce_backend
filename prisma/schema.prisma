@@ -43,6 +43,7 @@ model Order {
   createdAt   DateTime    @default(now())
   status      String      @default("pending")
   orderItems  OrderItem[]
+  total       Float       @default(0.0)
 }
 
 model OrderItem {
