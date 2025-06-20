@@ -4,9 +4,7 @@ export async function createOrder(req, res, next) {
   const userId = parseInt(req.params.userId);
   try {
     const cart = await prisma.cart.findUnique({
-      where: {
-        userId: userId,
-      },
+      where: { userId },
       include: {
         items: {
           include: {
@@ -15,6 +13,12 @@ export async function createOrder(req, res, next) {
         },
       },
     });
+
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ message: "Panier vide ou inexistant." });
+    }
+
+    // Vérification du stock
     for (const item of cart.items) {
       const actualStock = item.product.stock;
       if (item.quantity > actualStock) {
@@ -23,7 +27,9 @@ export async function createOrder(req, res, next) {
         });
       }
     }
-    const order = prisma.order.create({
+
+    // Création de la commande
+    const order = await prisma.order.create({
       data: {
         userId,
         orderItems: {
@@ -38,11 +44,8 @@ export async function createOrder(req, res, next) {
         orderItems: true,
       },
     });
-    await prisma.cartItem.deleteMany({
-      where: { cartId: cart.id },
-    });
 
-    //réduire le stock du produit à la commande
+    // Mise à jour du stock des produits
     for (const item of cart.items) {
       await prisma.product.update({
         where: { id: item.productId },
@@ -53,7 +56,13 @@ export async function createOrder(req, res, next) {
         },
       });
     }
-    //CALCULE du total de la comande
+
+    // Suppression des items du panier
+    await prisma.cartItem.deleteMany({
+      where: { cartId: cart.id },
+    });
+
+    // Calcul du total
     const total = cart.items.reduce(
       (acc, item) => acc + item.quantity * item.product.price,
       0
@@ -74,6 +83,13 @@ export async function getOrders(req, res, next) {
     const orders = await prisma.order.findMany({
       where: {
         userId: userId,
+      },
+      include: {
+        orderItems: {
+          include: {
+            product: true,
+          },
+        },
       },
     });
 
