@@ -5,7 +5,6 @@ import express from "express";
 import { getCart } from "../src/controllers/cartController.js";
 import prisma from "../src/db/prismaClient.js";
 
-// Mock prisma
 vi.mock("../src/db/prismaClient.js", () => ({
   default: {
     cart: {
@@ -55,5 +54,16 @@ describe("GET /cart/:userId", () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toMatch("Récupération du panier");
+  });
+
+  it("retourne 200 si le panier est vide ", async () => {
+    prisma.cart.findUnique.mockResolvedValue({
+      id: 1,
+      userId: 1,
+      items: [],
+    });
+    const res = await request(app).get("/cart/1");
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toMatch("Le panier est vide");
   });
 });
