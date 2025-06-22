@@ -1,10 +1,10 @@
 import express from "express";
-import auth from "./routes/authRoute.js";
-import product from "./routes/productRoutes.js";
-import passport from "./auth/passport.js";
-import cart from "./routes/cartRoutes.js";
-import order from "./routes/orderRoutes.js";
-import { errorHandler } from "./middleware/errorHandler.js";
+import auth from "./routes/authRoute";
+import product from "./routes/productRoutes";
+import passport from "./auth/passport";
+import cart from "./routes/cartRoutes";
+import order from "./routes/orderRoutes";
+import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 const PORT = 3000;

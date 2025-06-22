@@ -1,4 +1,4 @@
-import prisma from "../db/prismaClient.js";
+import prisma from "../db/prismaClient.ts";
 
 export async function createOrder(req, res, next) {
   const userId = parseInt(req.params.userId);

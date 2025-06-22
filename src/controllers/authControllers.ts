@@ -1,9 +1,9 @@
 // @ts-nocheck
-import passport from "../auth/passport.js";
+import passport from "../auth/passport.ts";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
-import prisma from "../db/prismaClient.js";
+import prisma from "../db/prismaClient.ts";
 
 dotenv.config();
 

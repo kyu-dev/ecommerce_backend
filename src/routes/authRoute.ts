@@ -4,7 +4,7 @@ import {
   register,
   googleCallback,
   googleFailure,
-} from "../controllers/authControllers.js";
+} from "../controllers/authControllers.ts";
 const router = express.Router();
 import passport from "passport";
 
