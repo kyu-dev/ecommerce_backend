@@ -30,4 +30,75 @@ router.get(
 router.get("/failure", googleFailure);
 //
 
+/**
+ * @swagger
+ * /authentication/login:
+ *   post:
+ *     summary: Connexion utilisateur (local)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@email.com"
+ *               password:
+ *                 type: string
+ *                 example: "motdepasse"
+ *     responses:
+ *       200:
+ *         description: Connexion réussie
+ *       401:
+ *         description: Authentification échouée
+ *
+ * /authentication/register:
+ *   post:
+ *     summary: Inscription utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@email.com"
+ *               password:
+ *                 type: string
+ *                 example: "motdepasse"
+ *               name:
+ *                 type: string
+ *                 example: "John Doe"
+ *     responses:
+ *       201:
+ *         description: Utilisateur inscrit
+ *
+ * /authentication/google:
+ *   get:
+ *     summary: Connexion via Google OAuth
+ *     responses:
+ *       302:
+ *         description: Redirection vers Google
+ *
+ * /authentication/google/callback:
+ *   get:
+ *     summary: Callback Google OAuth
+ *     responses:
+ *       200:
+ *         description: Connexion Google réussie
+ *       401:
+ *         description: Authentification Google échouée
+ *
+ * /authentication/failure:
+ *   get:
+ *     summary: Échec de l'authentification Google
+ *     responses:
+ *       401:
+ *         description: Échec Google
+ */
+
 export default router;
