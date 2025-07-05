@@ -7,6 +7,7 @@ import order from "./routes/orderRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
+import cors from "cors";
 
 const swaggerOptions = {
   definition: {
@@ -18,7 +19,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: "http://localhost:3001",
       },
     ],
   },
@@ -29,10 +30,18 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 const app = express();
 const PORT = 3001;
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(passport.initialize());
 app.use(errorHandler);
-app.use(express.json());
+
 app.use("/authentication", auth);
 app.use("/product", product);
 app.use("/cart", cart);
