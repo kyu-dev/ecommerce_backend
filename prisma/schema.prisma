@@ -13,6 +13,7 @@ model User {
   email     String   @unique
   password  String?
   google_id String?  @unique
+  role      String   @default("user") // "user" ou "admin"
 
   orders    Order[]
   cart      Cart?   
@@ -26,14 +27,29 @@ model Cart {
   updatedAt DateTime   @updatedAt
 }
 
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique // "Blonde", "Brune", "Blanche", "IPA", etc.
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model Product {
   id          Int         @id @default(autoincrement())
   name        String
   description String?
   price       Float
   stock       Int         @default(0)
+  alcoholDegree Float?    // Degré d'alcool (ex: 5.2)
+  img         String?     // URL de l'image de la bière
+  category    Category    @relation(fields: [categoryId], references: [id])
+  categoryId  Int
   orderItems  OrderItem[]
   cartItems   CartItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Order {
@@ -55,7 +71,6 @@ model OrderItem {
   quantity  Int
   price     Float
 }
-
 
 model CartItem {
   id        Int      @id @default(autoincrement())
