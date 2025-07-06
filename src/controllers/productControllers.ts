@@ -10,7 +10,8 @@ export async function createProduct(
   res: Response,
   next: NextFunction
 ) {
-  const { name, description, price, stock } = req.body;
+  const { name, description, price, stock, alcoholDegree, img, categoryId } =
+    req.body;
   try {
     // Query Prisma pour créer un produit
     const product = await prisma.product.create({
@@ -19,6 +20,12 @@ export async function createProduct(
         description: description,
         price: price,
         stock: stock,
+        alcoholDegree: alcoholDegree ? parseFloat(alcoholDegree) : null,
+        img: img,
+        categoryId: parseInt(categoryId),
+      },
+      include: {
+        category: true, // Inclure la catégorie dans la réponse
       },
     });
 
@@ -55,9 +62,10 @@ export async function getProducts(
         lte?: number;
       };
       id?: number;
+      categoryId?: number;
     }
 
-    const { name, minPrice, maxPrice, stock, id } = req.query;
+    const { name, minPrice, maxPrice, stock, id, categoryId } = req.query;
     const where: WhereClause = {}; //condition initialisé vide
 
     if (name) {
@@ -88,7 +96,16 @@ export async function getProducts(
       where.id = parseInt(String(id)); //reçois un entier
     }
 
-    const data = await prisma.product.findMany({ where });
+    if (categoryId) {
+      where.categoryId = parseInt(String(categoryId)); //filtre par catégorie
+    }
+
+    const data = await prisma.product.findMany({
+      where,
+      include: {
+        category: true, // Inclure la catégorie dans la réponse
+      },
+    });
     res.status(200).json({ message: "Produits Trouvé", data });
   } catch (err) {
     next(err);
@@ -105,7 +122,8 @@ export async function modifyProduct(
   next: NextFunction
 ) {
   const productId = req.params.id;
-  const { name, description, price, stock } = req.body;
+  const { name, description, price, stock, alcoholDegree, img, categoryId } =
+    req.body;
   try {
     const data = await prisma.product.update({
       data: {
@@ -113,9 +131,15 @@ export async function modifyProduct(
         description: description,
         price: price,
         stock: stock,
+        alcoholDegree: alcoholDegree ? parseFloat(alcoholDegree) : null,
+        img: img,
+        categoryId: categoryId ? parseInt(categoryId) : undefined,
       },
       where: {
         id: parseInt(productId),
+      },
+      include: {
+        category: true, // Inclure la catégorie dans la réponse
       },
     });
     res.status(200).json({ message: "Produit modifié", data });
