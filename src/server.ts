@@ -7,7 +7,6 @@ import order from "./routes/orderRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
-import cors from "cors";
 
 const swaggerOptions = {
   definition: {
@@ -29,14 +28,7 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 const app = express();
-const PORT = 3001;
-
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+const PORT = 3000;
 
 app.use(express.json());
 app.use(passport.initialize());

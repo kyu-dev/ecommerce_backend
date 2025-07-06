@@ -5,10 +5,11 @@ import {
   getProducts,
   modifyProduct,
 } from "../controllers/productControllers";
+import { authenticateJWT } from "@/middleware/authHandler";
 const router = express.Router();
 
 router.post("/create", createProduct);
-router.get("/get", getProducts);
+router.get("/get", authenticateJWT, getProducts);
 router.put("/put/:id", modifyProduct);
 router.delete("/delete/:id", deleteProduct);
 
