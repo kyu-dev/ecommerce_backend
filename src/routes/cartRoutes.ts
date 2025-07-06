@@ -6,14 +6,15 @@ import {
   modifyProduct,
   clearCart,
 } from "../controllers/cartController";
+import { authenticateJWT } from "@/middleware/authHandler";
 
 const router = express.Router();
 
-router.get("/:userId", getCart as any);
-router.post("/:userId", addItems as any);
-router.delete("/:userId/item/:productId", deleteItem as any);
-router.put("/:userId", modifyProduct as any);
-router.delete("/:userId/clearCart", clearCart as any);
+router.get("/:userId", authenticateJWT, getCart as any);
+router.post("/:userId", authenticateJWT, addItems as any);
+router.delete("/:userId/item/:productId", authenticateJWT, deleteItem as any);
+router.put("/:userId", authenticateJWT, modifyProduct as any);
+router.delete("/:userId/clearCart", authenticateJWT, clearCart as any);
 
 /**
  * @swagger

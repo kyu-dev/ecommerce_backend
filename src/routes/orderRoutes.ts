@@ -2,7 +2,7 @@ import express from "express";
 import { createOrder, getOrders } from "../controllers/orderController";
 const router = express.Router();
 
-router.post("/:userId", createOrder);
+router.post("/:userId", createOrder as any);
 router.get("/:userId", getOrders);
 /**
  * @swagger
