@@ -38,7 +38,7 @@ app.use(errorHandler);
 app.use("/authentication", auth);
 app.use("/product", product);
 app.use("/cart", cart);
-app.use("category", category);
+app.use("/category", category);
 app.use("/order", order);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
