@@ -43,3 +43,29 @@ export async function deleteCategory(
     next(err);
   }
 }
+
+// controller pour afficher les category avec les produit associé
+export async function getAllCategories(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const categories = await prisma.category.findMany({
+      include: {
+        products: true, // Inclure les produits associés à chaque catégorie
+      },
+    });
+
+    if (categories.length === 0) {
+      return res.status(404).json({ message: "Aucune catégorie trouvée" });
+    }
+
+    res.status(200).json({
+      message: "Catégories récupérées avec succès",
+      data: categories,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
