@@ -2,6 +2,7 @@ import express from "express";
 import auth from "./routes/authRoute";
 import product from "./routes/productRoutes";
 import passport from "./auth/passport";
+import category from "./routes/categoryRoutes";
 import cart from "./routes/cartRoutes";
 import order from "./routes/orderRoutes";
 import { errorHandler } from "./middleware/errorHandler";
@@ -37,6 +38,7 @@ app.use(errorHandler);
 app.use("/authentication", auth);
 app.use("/product", product);
 app.use("/cart", cart);
+app.use("category", category);
 app.use("/order", order);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
