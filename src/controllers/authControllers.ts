@@ -65,7 +65,7 @@ export async function register(req, res, next) {
 //functions pou la connexion O2auth google
 export function googleCallback(req, res) {
   const { token } = req.user;
-  res.redirect(`http://localhost:3000/auth/google-callback?token=${token}`);
+  res.redirect(`http://localhost:4000/auth/google-callback?token=${token}`);
 }
 
 export function googleFailure(req, res) {
