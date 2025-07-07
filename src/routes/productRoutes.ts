@@ -8,10 +8,10 @@ import {
 import { authenticateJWT } from "@/middleware/authHandler";
 const router = express.Router();
 
-router.post("/create", createProduct);
+router.post("/create", authenticateJWT, createProduct);
 router.get("/get", getProducts);
-router.put("/put/:id", modifyProduct);
-router.delete("/delete/:id", deleteProduct);
+router.put("/put/:id", authenticateJWT, modifyProduct);
+router.delete("/delete/:id", authenticateJWT, deleteProduct);
 
 /**
  * @swagger
