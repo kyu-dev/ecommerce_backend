@@ -93,7 +93,16 @@ export async function getProducts(
     }
 
     if (id) {
-      where.id = parseInt(String(id)); //reçois un entier
+      const product = await prisma.product.findUnique({
+        where: { id: parseInt(String(id)) },
+        include: { category: true },
+      });
+
+      if (!product) {
+        return res.status(404).json({ message: "Produit introuvable" });
+      }
+
+      return res.status(200).json({ message: "Produit trouvé", data: product });
     }
 
     if (categoryId) {
