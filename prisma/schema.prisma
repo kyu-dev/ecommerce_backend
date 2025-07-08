@@ -46,6 +46,8 @@ model Product {
   img         String?     // URL de l'image de la bière
   category    Category    @relation(fields: [categoryId], references: [id])
   categoryId  Int
+  volume     Volume      @relation(fields: [volumeId], references: [id])
+  volumeId   Int
   orderItems  OrderItem[]
   cartItems   CartItem[]
   createdAt   DateTime    @default(now())
@@ -80,4 +82,10 @@ model CartItem {
   product   Product  @relation(fields: [productId], references: [id])
   productId Int
   quantity  Int      @default(1)
+}
+
+model Volume {
+  id      Int      @id @default(autoincrement())
+  value   Float    // Contenance en cl (ex: 33.0)
+  products Product[]
 }
