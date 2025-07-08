@@ -2,6 +2,7 @@ import express from "express";
 import {
   createProduct,
   deleteProduct,
+  getNewProducts,
   getProducts,
   modifyProduct,
 } from "../controllers/productControllers";
@@ -9,7 +10,8 @@ import { authenticateJWT } from "@/middleware/authHandler";
 const router = express.Router();
 
 router.post("/create", authenticateJWT, createProduct);
-router.get("/get", getProducts);
+router.get("/get", getProducts as any);
+router.get("/new/:limit", getNewProducts);
 router.put("/put/:id", authenticateJWT, modifyProduct);
 router.delete("/delete/:id", authenticateJWT, deleteProduct);
 

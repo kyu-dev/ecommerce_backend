@@ -120,7 +120,31 @@ export async function getProducts(
     next(err);
   }
 }
-
+/////////////////////////////////////////////////////
+// Controller pour récupérer les nouveaus produits //
+////////////////////////////////////////////////////
+export async function getNewProducts(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    // Récupère la limite depuis les params, valeur par défaut 10
+    const limit = req.params.limit ? parseInt(req.params.limit) : 10;
+    const data = await prisma.product.findMany({
+      orderBy: {
+        createdAt: "desc", // Trie par date de création décroissante
+      },
+      take: limit, // Limite le nombre de résultats
+      include: {
+        category: true,
+      },
+    });
+    res.status(200).json({ message: "Produits les plus récents", data });
+  } catch (err) {
+    next(err);
+  }
+}
 ////////////////////////////////////////////////////////////
 // Controller pour modifier un produit à partir de son id //
 ////////////////////////////////////////////////////////////
