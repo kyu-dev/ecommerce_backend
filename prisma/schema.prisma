@@ -29,7 +29,7 @@ model Cart {
 
 model Category {
   id          Int       @id @default(autoincrement())
-  name        String    @unique // "Blonde", "Brune", "Blanche", "IPA", etc.
+  name        String    @unique @default("Blonde") // "Blonde", "Brune", "Blanche", "IPA", etc.
   description String?
   products    Product[]
   createdAt   DateTime  @default(now())
