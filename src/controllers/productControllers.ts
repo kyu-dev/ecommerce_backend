@@ -10,9 +10,25 @@ export async function createProduct(
   res: Response,
   next: NextFunction
 ) {
-  const { name, description, price, stock, alcoholDegree, img, categoryId } =
-    req.body;
+  const {
+    name,
+    description,
+    price,
+    stock,
+    alcoholDegree,
+    img,
+    categoryId,
+    rating,
+  } = req.body;
   try {
+    // Gestion du rating : float entre 0 et 5
+    let safeRating = 0;
+    if (rating !== undefined && rating !== null) {
+      const parsedRating = parseFloat(rating);
+      if (isNaN(parsedRating) || parsedRating < 0) safeRating = 0;
+      else if (parsedRating > 5) safeRating = 5;
+      else safeRating = parsedRating;
+    }
     // Query Prisma pour créer un produit
     const product = await prisma.product.create({
       data: {
@@ -23,6 +39,7 @@ export async function createProduct(
         alcoholDegree: alcoholDegree ? parseFloat(alcoholDegree) : null,
         img: img,
         categoryId: parseInt(categoryId),
+        rating: safeRating,
       },
       include: {
         category: true, // Inclure la catégorie dans la réponse
@@ -155,9 +172,25 @@ export async function modifyProduct(
   next: NextFunction
 ) {
   const productId = req.params.id;
-  const { name, description, price, stock, alcoholDegree, img, categoryId } =
-    req.body;
+  const {
+    name,
+    description,
+    price,
+    stock,
+    alcoholDegree,
+    img,
+    categoryId,
+    rating,
+  } = req.body;
   try {
+    // Gestion du rating : float entre 0 et 5
+    let safeRating = undefined;
+    if (rating !== undefined && rating !== null) {
+      const parsedRating = parseFloat(rating);
+      if (isNaN(parsedRating) || parsedRating < 0) safeRating = 0;
+      else if (parsedRating > 5) safeRating = 5;
+      else safeRating = parsedRating;
+    }
     const data = await prisma.product.update({
       data: {
         name: name,
@@ -167,6 +200,7 @@ export async function modifyProduct(
         alcoholDegree: alcoholDegree ? parseFloat(alcoholDegree) : null,
         img: img,
         categoryId: categoryId ? parseInt(categoryId) : undefined,
+        ...(safeRating !== undefined ? { rating: safeRating } : {}),
       },
       where: {
         id: parseInt(productId),
