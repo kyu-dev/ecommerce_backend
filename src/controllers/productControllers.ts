@@ -19,6 +19,7 @@ export async function createProduct(
     img,
     categoryId,
     rating,
+    volumeId,
   } = req.body;
   try {
     // Gestion du rating : float entre 0 et 5
@@ -40,6 +41,7 @@ export async function createProduct(
         img: img,
         categoryId: parseInt(categoryId),
         rating: safeRating,
+        volumeId: parseInt(volumeId),
       },
       include: {
         category: true, // Inclure la catégorie dans la réponse
@@ -204,6 +206,7 @@ export async function modifyProduct(
     img,
     categoryId,
     rating,
+    volumeId,
   } = req.body;
   try {
     // Gestion du rating : float entre 0 et 5
@@ -222,6 +225,7 @@ export async function modifyProduct(
         stock: stock,
         alcoholDegree: alcoholDegree ? parseFloat(alcoholDegree) : null,
         img: img,
+        volumeId: parseInt(volumeId),
         categoryId: categoryId ? parseInt(categoryId) : undefined,
         ...(safeRating !== undefined ? { rating: safeRating } : {}),
       },

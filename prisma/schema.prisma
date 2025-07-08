@@ -86,6 +86,6 @@ model CartItem {
 
 model Volume {
   id      Int      @id @default(autoincrement())
-  value   Float    // Contenance en cl (ex: 33.0)
+  value   Float  @default(33)  // Contenance en cl (ex: 33.0)
   products Product[]
 }
