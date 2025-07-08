@@ -65,12 +65,16 @@ export async function getProducts(
   next: NextFunction
 ) {
   try {
-    interface WhereClause {
+    type WhereClause = {
       name?: {
         contains: string;
         mode: "insensitive";
       };
       price?: {
+        gte?: number;
+        lte?: number;
+      };
+      rating?: {
         gte?: number;
         lte?: number;
       };
@@ -80,9 +84,18 @@ export async function getProducts(
       };
       id?: number;
       categoryId?: number;
-    }
+    };
 
-    const { name, minPrice, maxPrice, stock, id, categoryId } = req.query;
+    const {
+      name,
+      minPrice,
+      maxPrice,
+      stock,
+      id,
+      categoryId,
+      minRating,
+      maxRating,
+    } = req.query;
     const where: WhereClause = {}; //condition initialisé vide
 
     if (name) {
@@ -90,6 +103,16 @@ export async function getProducts(
         contains: String(name),
         mode: "insensitive", //ignore upercase et lowercase
       };
+    }
+
+    if (minRating || maxRating) {
+      where.rating = {};
+      if (minRating) {
+        where.rating.gte = parseFloat(String(minRating)); // plus grand ou égal à
+      }
+      if (maxRating) {
+        where.rating.lte = parseFloat(String(maxRating)); // plus petit ou égal à
+      }
     }
 
     if (maxPrice || minPrice) {
