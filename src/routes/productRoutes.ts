@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getNewProducts,
   getProducts,
+  getTopProduct,
   modifyProduct,
 } from "../controllers/productControllers";
 import { authenticateJWT } from "@/middleware/authHandler";
@@ -12,6 +13,7 @@ const router = express.Router();
 router.post("/create", authenticateJWT, createProduct);
 router.get("/get", getProducts as any);
 router.get("/new/:limit", getNewProducts);
+router.get("/top/:limit", getTopProduct);
 router.put("/put/:id", authenticateJWT, modifyProduct);
 router.delete("/delete/:id", authenticateJWT, deleteProduct);
 

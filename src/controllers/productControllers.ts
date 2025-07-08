@@ -187,6 +187,31 @@ export async function getNewProducts(
     next(err);
   }
 }
+/////////////////////////////////////////////////////
+// Controller pour récupérer les meilleur produits //
+////////////////////////////////////////////////////
+export async function getTopProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const limit = req.params.limit ? parseInt(req.params.limit) : 10;
+    const data = await prisma.product.findMany({
+      orderBy: {
+        rating: "desc", // Trie par la notation décroissante
+      },
+      take: limit, // Limite le nombre de résultats
+      include: {
+        category: true,
+      },
+    });
+    res.status(200).json({ message: "Produits les plus appréciés", data });
+  } catch (err) {
+    next(err);
+  }
+}
+
 ////////////////////////////////////////////////////////////
 // Controller pour modifier un produit à partir de son id //
 ////////////////////////////////////////////////////////////
