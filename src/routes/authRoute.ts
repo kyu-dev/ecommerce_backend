@@ -4,9 +4,11 @@ import {
   register,
   googleCallback,
   googleFailure,
+  ping,
 } from "../controllers/authControllers";
 const router = express.Router();
 import passport from "passport";
+import { authenticateJWT } from "@/middleware/authHandler";
 
 // route de connexion et création de compte local strategie
 router.post("/login", login);
@@ -29,6 +31,8 @@ router.get(
 );
 router.get("/failure", googleFailure);
 //
+
+router.get("/me", authenticateJWT, ping as any);
 
 /**
  * @swagger

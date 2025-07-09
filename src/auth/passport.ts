@@ -60,7 +60,7 @@ passport.use(
     {
       jwtFromRequest: (req) => {
         if (req && req.cookies) {
-          return req.cookies.chocoCookie;
+          return req.cookies.token;
         }
         return null;
       },

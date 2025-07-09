@@ -4,6 +4,10 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import prisma from "../db/prismaClient.ts";
+import { NextFunction, Response } from "express";
+import { authenticateJWT } from "@/middleware/authHandler.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config();
 
@@ -23,9 +27,11 @@ export function login(req, res, next) {
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
 
-    res.cookie("chocoCookie", token, {
+    res.cookie("token", token, {
       httpOnly: true, // le cookie n'est pas accessible en JS côté client
-      maxAge: 3600000, // 1h en ms
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return res.json({ message: "hmmm le bon chocoCookie", token });
   })(req, res, next);
@@ -72,7 +78,9 @@ export function googleCallback(req, res) {
 
   res.cookie("token", token, {
     httpOnly: true,
-    maxAge: 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.redirect("http://localhost:4000/auth/google-callback");
@@ -80,4 +88,18 @@ export function googleCallback(req, res) {
 
 export function googleFailure(req, res) {
   res.status(401).json({ message: "Google Authentication Failed" });
+}
+
+// Contrôleur pour la route /authentication/me
+export function ping(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Non authentifié" });
+    }
+    // On retourne les infos principales de l'utilisateur
+    const { id, email, name } = req.user;
+    res.status(200).json({ id, email, name });
+  } catch (err) {
+    next(err);
+  }
 }
