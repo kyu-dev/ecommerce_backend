@@ -23,7 +23,11 @@ export function login(req, res, next) {
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
 
-    return res.json({ token });
+    res.cookie("chocoCookie", token, {
+      httpOnly: true, // le cookie n'est pas accessible en JS côté client
+      maxAge: 3600000, // 1h en ms
+    });
+    return res.json({ message: "hmmm le bon chocoCookie", token });
   })(req, res, next);
 }
 
@@ -62,10 +66,16 @@ export async function register(req, res, next) {
   }
 }
 
-//functions pou la connexion O2auth google
+//functions pour la connexion O2auth google
 export function googleCallback(req, res) {
   const { token } = req.user;
-  res.redirect(`http://localhost:4000/auth/google-callback?token=${token}`);
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 1000,
+  });
+
+  res.redirect("http://localhost:4000/auth/google-callback");
 }
 
 export function googleFailure(req, res) {

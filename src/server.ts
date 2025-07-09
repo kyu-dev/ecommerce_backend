@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import auth from "./routes/authRoute";
 import product from "./routes/productRoutes";
 import passport from "./auth/passport";
@@ -8,6 +9,7 @@ import order from "./routes/orderRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
+import cors from "cors";
 
 const swaggerOptions = {
   definition: {
@@ -32,9 +34,15 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use(errorHandler);
-
+app.use(
+  cors({
+    origin: "http://localhost:4000",
+    credentials: true,
+  })
+);
 app.use("/authentication", auth);
 app.use("/product", product);
 app.use("/cart", cart);
