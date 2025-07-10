@@ -2,6 +2,16 @@ import prisma from "../db/prismaClient";
 import { Request, Response, NextFunction } from "express";
 import stripe from "../utils/stripe";
 
+interface CartItemWithProduct {
+  productId: number;
+  quantity: number;
+  product: {
+    name: string;
+    price: number;
+    stock: number;
+  };
+}
+
 // Fonction utilitaire pour créer une commande à partir du panier utilisateur
 async function createOrderForUser(userId: number) {
   const cart = await prisma.cart.findUnique({
@@ -20,7 +30,7 @@ async function createOrderForUser(userId: number) {
   }
 
   // Vérification du stock
-  for (const item of cart.items) {
+  for (const item of cart.items as CartItemWithProduct[]) {
     const actualStock = item.product.stock;
     if (item.quantity > actualStock) {
       throw new Error(
@@ -31,7 +41,8 @@ async function createOrderForUser(userId: number) {
 
   // Calcul du total
   const total = cart.items.reduce(
-    (acc: number, item: any) => acc + item.quantity * item.product.price,
+    (acc: number, item: CartItemWithProduct) =>
+      acc + item.quantity * item.product.price,
     0
   );
 
@@ -42,7 +53,7 @@ async function createOrderForUser(userId: number) {
       total,
       status: "paid", // La commande est directement en statut payé
       orderItems: {
-        create: cart.items.map((item: any) => ({
+        create: (cart.items as CartItemWithProduct[]).map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
           price: item.product.price,
