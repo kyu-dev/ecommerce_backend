@@ -32,7 +32,7 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 // D'abord la route webhook, en raw
 app.post(
@@ -48,7 +48,7 @@ app.use(passport.initialize());
 app.use(errorHandler);
 app.use(
   cors({
-    origin: "http://localhost:4000",
+    origin: process.env.FRONTEND_URL || "http://localhost:4000",
     credentials: true,
   })
 );

@@ -83,7 +83,10 @@ export function googleCallback(req, res) {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.redirect("http://localhost:4000/auth/google-callback");
+  res.redirect(
+    (process.env.FRONTEND_URL || "http://localhost:4000") +
+      "/auth/google-callback"
+  );
 }
 
 export function googleFailure(req, res) {
