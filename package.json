@@ -7,7 +7,7 @@
   "scripts": {
     "test": "vitest",
     "dev": "nodemon --exec tsx src/server.ts",
-    "build": "pnpm prisma generate && tsc",
+    "build": "pnpm prisma generate && pnpm tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
