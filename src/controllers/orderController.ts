@@ -151,7 +151,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
     }
 
     // Transformer les items du panier au format Stripe
-    const line_items = cart.items.map((item) => ({
+    const line_items = cart.items.map((item: CartItemWithProduct) => ({
       price_data: {
         currency: "eur",
         product_data: {
