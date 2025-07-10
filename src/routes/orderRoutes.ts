@@ -1,9 +1,21 @@
 import express from "express";
-import { createOrder, getOrders } from "../controllers/orderController";
+import {
+  createOrder,
+  getOrders,
+  createCheckoutSession,
+  stripeWebhook,
+} from "../controllers/orderController";
+import { authenticateJWT } from "@/middleware/authHandler";
 const router = express.Router();
 
-router.post("/:userId", createOrder as any);
-router.get("/:userId", getOrders);
+router.post("/:userId", authenticateJWT, createOrder as any);
+router.get("/:userId", authenticateJWT, getOrders);
+router.post(
+  "/:userId/create-checkout-session",
+  authenticateJWT,
+  createCheckoutSession as any
+);
+
 /**
  * @swagger
  * /order/{userId}:

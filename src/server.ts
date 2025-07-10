@@ -10,6 +10,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import cors from "cors";
+import { stripeWebhook } from "./controllers/orderController";
 
 const swaggerOptions = {
   definition: {
@@ -33,6 +34,14 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 const app = express();
 const PORT = 3000;
 
+// D'abord la route webhook, en raw
+app.post(
+  "/order/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhook
+);
+
+// Ensuite le reste des middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
