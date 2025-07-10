@@ -155,9 +155,8 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
       payment_method_types: ["card"],
       line_items,
       mode: "payment",
-      success_url:
-        "https://ton-site.com/success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "https://ton-site.com/cancel",
+      success_url: "http://localhost:4000/success",
+      cancel_url: "http://localhost:4000/",
       metadata: { userId: userId.toString() }, // Ajout du userId pour le webhook
     });
     res.json({ url: session.url });
