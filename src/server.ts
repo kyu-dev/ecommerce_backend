@@ -1,16 +1,16 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import auth from "./routes/authRoute";
-import product from "./routes/productRoutes";
-import passport from "./auth/passport";
-import category from "./routes/categoryRoutes";
-import cart from "./routes/cartRoutes";
-import order from "./routes/orderRoutes";
-import { errorHandler } from "./middleware/errorHandler";
+import auth from "@/routes/authRoute";
+import product from "@/routes/productRoutes";
+import passport from "@/auth/passport";
+import category from "@/routes/categoryRoutes";
+import cart from "@/routes/cartRoutes";
+import order from "@/routes/orderRoutes";
+import { errorHandler } from "@/middleware/errorHandler";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import cors from "cors";
-import { stripeWebhook } from "./controllers/orderController";
+import { stripeWebhook } from "@/controllers/orderController";
 
 const swaggerOptions = {
   definition: {

@@ -1,6 +1,6 @@
-import prisma from "../db/prismaClient";
+import prisma from "@/db/prismaClient";
 import { Request, Response, NextFunction } from "express";
-import stripe from "../utils/stripe";
+import stripe from "@/utils/stripe";
 
 interface CartItemWithProduct {
   productId: number;

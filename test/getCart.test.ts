@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 import express from "express";
-import { getCart } from "../src/controllers/cartController";
-import prisma from "../src/db/prismaClient";
+import { getCart } from "@/controllers/cartController";
+import prisma from "@/db/prismaClient";
 
-vi.mock("../src/db/prismaClient", () => ({
+vi.mock("@/db/prismaClient", () => ({
   default: {
     cart: {
       findUnique: vi.fn(),
@@ -12,9 +12,11 @@ vi.mock("../src/db/prismaClient", () => ({
   },
 }));
 
+const mockedPrisma = prisma as any;
+
 const app = express();
 app.use(express.json());
-app.get("/cart/:userId", getCart);
+app.get("/cart/:userId", getCart as any);
 
 //test pour la route de récupération du panier de l'utilisataeur
 describe("GET /cart/:userId", () => {
@@ -23,7 +25,7 @@ describe("GET /cart/:userId", () => {
   });
 
   it("retourne 404 si le panier n'existe pas", async () => {
-    prisma.cart.findUnique.mockResolvedValue(null);
+    mockedPrisma.cart.findUnique.mockResolvedValue(null);
 
     const res = await request(app).get("/cart/1");
 
@@ -32,7 +34,7 @@ describe("GET /cart/:userId", () => {
   });
 
   it("retourne 200 si le panier existe", async () => {
-    prisma.cart.findUnique.mockResolvedValue({
+    mockedPrisma.cart.findUnique.mockResolvedValue({
       id: 1,
       userId: 1,
       items: [
@@ -56,7 +58,7 @@ describe("GET /cart/:userId", () => {
   });
 
   it("retourne 200 si le panier est vide ", async () => {
-    prisma.cart.findUnique.mockResolvedValue({
+    mockedPrisma.cart.findUnique.mockResolvedValue({
       id: 1,
       userId: 1,
       items: [],

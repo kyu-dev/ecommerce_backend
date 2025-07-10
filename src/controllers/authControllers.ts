@@ -1,11 +1,11 @@
 // @ts-nocheck
-import passport from "../auth/passport.ts";
+import passport from "@/auth/passport";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
-import prisma from "../db/prismaClient.ts";
+import prisma from "@/db/prismaClient";
 import { NextFunction, Response } from "express";
-import { authenticateJWT } from "@/middleware/authHandler.js";
+import { authenticateJWT } from "@/middleware/authHandler";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 

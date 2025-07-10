@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import prisma from "../db/prismaClient";
+import prisma from "@/db/prismaClient";
 
 // controller de creation de category
 export async function createCategory(

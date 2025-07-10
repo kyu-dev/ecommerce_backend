@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "vitest",
     "dev": "nodemon --exec tsx src/server.ts",
-    "build": "pnpm prisma generate && pnpm tsc",
-    "start": "node dist/server.js"
+    "build": "pnpm prisma generate && pnpm tsc && pnpm tsc-alias",
+    "start": "node dist/src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -41,12 +40,14 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
+    "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.10",
     "prisma": "^6.9.0",
     "supertest": "^7.1.1",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
