@@ -28,9 +28,9 @@ export function login(req, res, next) {
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
 
     res.cookie("token", token, {
-      httpOnly: true, // le cookie n'est pas accessible en JS côté client
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return res.json({ message: "hmmm le bon chocoCookie", token });
@@ -78,8 +78,8 @@ export function googleCallback(req, res) {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: true,
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
