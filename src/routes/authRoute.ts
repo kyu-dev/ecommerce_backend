@@ -5,6 +5,7 @@ import {
   googleCallback,
   googleFailure,
   ping,
+  logout,
 } from "../controllers/authControllers";
 const router = express.Router();
 import passport from "passport";
@@ -33,6 +34,7 @@ router.get("/failure", googleFailure);
 //
 
 router.get("/me", authenticateJWT, ping as any);
+router.post("/logout", logout);
 
 /**
  * @swagger
