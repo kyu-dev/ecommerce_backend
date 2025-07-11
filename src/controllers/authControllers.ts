@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import prisma from "@/db/prismaClient";
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import { authenticateJWT } from "@/middleware/authHandler";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -96,13 +96,20 @@ export function googleFailure(req, res) {
 // Contrôleur pour la route /authentication/me
 export function ping(req: Request, res: Response, next: NextFunction) {
   try {
+    console.log('🔍 Debug ping - cookies:', req.cookies);
+    console.log('🔍 Debug ping - user:', req.user);
+    console.log('🔍 Debug ping - headers:', req.headers);
+    
     if (!req.user) {
+      console.log('❌ Pas d\'utilisateur trouvé');
       return res.status(401).json({ message: "Non authentifié" });
     }
     // On retourne les infos principales de l'utilisateur
     const { id, email, name } = req.user;
+    console.log('✅ Utilisateur trouvé:', { id, email, name });
     res.status(200).json({ id, email, name });
   } catch (err) {
+    console.error('❌ Erreur dans ping:', err);
     next(err);
   }
 }

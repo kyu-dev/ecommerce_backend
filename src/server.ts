@@ -52,13 +52,15 @@ app.post(
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
-app.use(errorHandler);
 app.use("/authentication", auth);
 app.use("/product", product);
 app.use("/cart", cart);
 app.use("/category", category);
 app.use("/order", order);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Error handler doit être après les routes
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`✅ Serveur lancé sur http://localhost:${PORT}`);
