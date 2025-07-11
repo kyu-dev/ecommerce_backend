@@ -32,7 +32,7 @@ router.get(
 router.get("/failure", googleFailure);
 //
 
-router.get("/me", authenticateJWT, ping);
+router.get("/me", authenticateJWT, ping as any);
 
 /**
  * @swagger

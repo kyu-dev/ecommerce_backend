@@ -120,7 +120,7 @@ passport.use(
         }
 
         const token = jwt.sign({ id: user.id }, JWT_SECRET, {
-          expiresIn: "24h",
+          expiresIn: "7d",
         });
 
         return done(null, { user, token });
