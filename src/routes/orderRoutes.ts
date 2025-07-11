@@ -3,7 +3,6 @@ import {
   createOrder,
   getOrders,
   createCheckoutSession,
-  stripeWebhook,
 } from "../controllers/orderController";
 import { authenticateJWT } from "@/middleware/authHandler";
 const router = express.Router();
