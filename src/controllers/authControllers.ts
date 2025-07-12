@@ -32,6 +32,7 @@ export function login(req, res, next) {
       secure: true,
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      domain: ".vercel.app", // Partage le cookie avec tous les sous-domaines vercel.app
     });
     return res.json({ message: "hmmm le bon chocoCookie", token });
   })(req, res, next);
@@ -81,6 +82,7 @@ export function googleCallback(req, res) {
     secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    domain: ".vercel.app", // Partage le cookie avec tous les sous-domaines vercel.app
   });
 
   res.redirect(
