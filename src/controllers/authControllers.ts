@@ -74,7 +74,12 @@ export async function register(req, res, next) {
 
 //functions pour la connexion O2auth google
 export function googleCallback(req, res) {
-  const { token } = req.user;
+  const payload = {
+    id: req.user.id,
+    email: req.user.email,
+  };
+
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 
   res.cookie("token", token, {
     httpOnly: true,
