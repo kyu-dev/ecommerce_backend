@@ -88,11 +88,22 @@ export function googleCallback(req, res) {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  // Envoie la réponse JSON avec l'URL de redirection côté frontend
-  res.status(200).json({
-    success: true,
-    redirectUrl: (process.env.FRONTEND_URL || "http://localhost:4000") + "/auth/google-callback",
-  });
+  // 🔁 Redirection via HTML pour éviter le bug Safari
+  const redirectUrl =
+    (process.env.FRONTEND_URL || "http://localhost:4000") +
+    "/auth/google-callback";
+
+  res.send(`
+    <html>
+      <head>
+        <meta http-equiv="refresh" content="0; url=${redirectUrl}" />
+        <script>window.location.href = "${redirectUrl}"</script>
+      </head>
+      <body>
+        Redirection...
+      </body>
+    </html>
+  `);
 }
 
 export function googleFailure(req, res) {
