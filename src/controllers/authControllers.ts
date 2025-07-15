@@ -33,7 +33,7 @@ export function login(req, res, next) {
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    return res.status(200).json({ success: true });
+    return res.json({ message: "hmmm le bon chocoCookie", token });
   })(req, res, next);
 }
 
@@ -91,6 +91,7 @@ export function googleCallback(req, res) {
   // Envoie la réponse JSON avec l'URL de redirection côté frontend
   res.status(200).json({
     success: true,
+    redirectUrl: (process.env.FRONTEND_URL || "http://localhost:4000") + "/auth/google-callback",
   });
 }
 
