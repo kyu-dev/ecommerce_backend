@@ -88,22 +88,11 @@ export function googleCallback(req, res) {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  // 🔁 Redirection via HTML pour éviter le bug Safari
-  const redirectUrl =
+  // Redirection côté backend
+  res.redirect(
     (process.env.FRONTEND_URL || "http://localhost:4000") +
-    "/auth/google-callback";
-
-  res.send(`
-    <html>
-      <head>
-        <meta http-equiv="refresh" content="0; url=${redirectUrl}" />
-        <script>window.location.href = "${redirectUrl}"</script>
-      </head>
-      <body>
-        Redirection...
-      </body>
-    </html>
-  `);
+      "/auth/google-callback"
+  );
 }
 
 export function googleFailure(req, res) {
