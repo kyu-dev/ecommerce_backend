@@ -41,6 +41,16 @@ app.use(
   })
 );
 
+// Ajout du middleware pour forcer les bons headers CORS
+app.use((req, res, next) => {
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    process.env.FRONTEND_URL || "http://localhost:4000"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 // D'abord la route webhook, en raw
 app.post(
   "/order/webhook",
