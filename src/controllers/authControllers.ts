@@ -27,13 +27,16 @@ export function login(req, res, next) {
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+    // On renvoie le token dans la réponse JSON au lieu d'un cookie
+    return res.json({
+      message: "Connexion réussie",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
     });
-    return res.json({ message: "hmmm le bon chocoCookie", token });
   })(req, res, next);
 }
 
@@ -81,17 +84,16 @@ export function googleCallback(req, res) {
 
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
-  // Redirection côté backend
+  // Redirection avec le token en query parameter (sera géré côté frontend)
   res.redirect(
     (process.env.FRONTEND_URL || "http://localhost:4000") +
-      "/auth/google-callback"
+      `/auth/google-callback?token=${token}&user=${encodeURIComponent(
+        JSON.stringify({
+          id: req.user.id,
+          email: req.user.email,
+          name: req.user.name,
+        })
+      )}`
   );
 }
 
@@ -115,6 +117,6 @@ export function ping(req: Request, res: Response, next: NextFunction) {
 
 // Contrôleur pour la route de déconnexion
 export function logout(req: Request, res: Response) {
-  res.clearCookie("token");
+  // Plus besoin de clearCookie, la déconnexion sera gérée côté client
   res.status(200).json({ message: "Déconnexion réussie" });
 }
