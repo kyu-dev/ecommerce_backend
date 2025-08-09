@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createProduct,
+  createManyProducts,
   deleteProduct,
   getNewProducts,
   getProducts,
@@ -11,6 +12,55 @@ import { authenticateJWT } from "@/middleware/authHandler";
 const router = express.Router();
 
 router.post("/create", authenticateJWT, createProduct);
+router.post("/create-many", authenticateJWT, createManyProducts);
+/**
+ * @swagger
+ * /product/create-many:
+ *   post:
+ *     summary: Créer plusieurs produits d'un coup
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               products:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: "Produit 1"
+ *                     price:
+ *                       type: number
+ *                       example: 10.99
+ *                     stock:
+ *                       type: integer
+ *                       example: 100
+ *                     description:
+ *                       type: string
+ *                       example: "Description du produit 1"
+ *                     alcoholDegree:
+ *                       type: number
+ *                       example: 12.5
+ *                     img:
+ *                       type: string
+ *                       example: "url_image_1.jpg"
+ *                     categoryId:
+ *                       type: integer
+ *                       example: 1
+ *                     rating:
+ *                       type: number
+ *                       example: 4.5
+ *                     volumeId:
+ *                       type: integer
+ *                       example: 2
+ *     responses:
+ *       201:
+ *         description: Produits créés
+ */
 router.get("/get", getProducts as any);
 router.get("/new/:limit", getNewProducts);
 router.get("/top/:limit", getTopProduct);

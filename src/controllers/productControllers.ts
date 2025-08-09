@@ -1,6 +1,64 @@
 import prisma from "@/db/prismaClient";
 import { Request, Response, NextFunction } from "express";
 
+///////////////////////////////////////////////
+// Controller pour créer plusieurs produits  //
+///////////////////////////////////////////////
+
+export async function createManyProducts(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const products = req.body.products;
+  if (!Array.isArray(products) || products.length === 0) {
+    res.status(400).json({ message: "Le tableau de produits est requis." });
+    return;
+  }
+  try {
+    // On prépare les données pour chaque produit
+    const data = products.map((prod) => {
+      let safeRating = 0;
+      if (prod.rating !== undefined && prod.rating !== null) {
+        const parsedRating = parseFloat(prod.rating);
+        if (isNaN(parsedRating) || parsedRating < 0) safeRating = 0;
+        else if (parsedRating > 5) safeRating = 5;
+        else safeRating = parsedRating;
+      }
+      // On construit dynamiquement l'objet pour ne pas inclure volumeId si non défini
+      const productData: any = {
+        name: prod.name,
+        description: prod.description,
+        price: prod.price,
+        stock: prod.stock,
+        alcoholDegree: prod.alcoholDegree
+          ? parseFloat(prod.alcoholDegree)
+          : null,
+        img: prod.img,
+        categoryId: parseInt(prod.categoryId),
+        rating: safeRating,
+      };
+      if (prod.volumeId) {
+        productData.volumeId = parseInt(prod.volumeId);
+      }
+      return productData;
+    });
+    // Prisma bulk create
+    const created = await prisma.product.createMany({
+      data,
+      skipDuplicates: true, // ignore les doublons sur les champs uniques
+    });
+    res.status(201).json({
+      message: `Création de ${created.count} produits réussie`,
+      count: created.count,
+    });
+    return;
+  } catch (err) {
+    next(err);
+    return;
+  }
+}
+
 ////////////////////////////////////
 //Controller pour créer un produit//
 //////////////////////////////////////////
