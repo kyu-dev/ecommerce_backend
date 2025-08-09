@@ -16,6 +16,18 @@ export async function createManyProducts(
     return;
   }
   try {
+    // Vérification que chaque produit a un volumeId
+    const missingVolume = products.findIndex(
+      (prod) => prod.volumeId === undefined || prod.volumeId === null
+    );
+    if (missingVolume !== -1) {
+      res
+        .status(400)
+        .json({
+          message: `Le champ volumeId est obligatoire pour chaque produit (erreur à l'index ${missingVolume})`,
+        });
+      return;
+    }
     // On prépare les données pour chaque produit
     const data = products.map((prod) => {
       let safeRating = 0;
@@ -25,8 +37,7 @@ export async function createManyProducts(
         else if (parsedRating > 5) safeRating = 5;
         else safeRating = parsedRating;
       }
-      // On construit dynamiquement l'objet pour ne pas inclure volumeId si non défini
-      const productData: any = {
+      return {
         name: prod.name,
         description: prod.description,
         price: prod.price,
@@ -37,11 +48,8 @@ export async function createManyProducts(
         img: prod.img,
         categoryId: parseInt(prod.categoryId),
         rating: safeRating,
+        volumeId: parseInt(prod.volumeId),
       };
-      if (prod.volumeId) {
-        productData.volumeId = parseInt(prod.volumeId);
-      }
-      return productData;
     });
     // Prisma bulk create
     const created = await prisma.product.createMany({
